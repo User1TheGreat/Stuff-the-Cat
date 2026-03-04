@@ -1,0 +1,191 @@
+body {
+  background-color: #282c34;
+  color: white;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+button:focus {
+  outline: none;
+}
+
+#game-container {
+  text-align: center;
+  background: #34495e;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.easy {
+  background: #27ae60;
+  color: white;
+}
+.medium {
+  background: #f1c40f;
+  color: black;
+}
+.hard {
+  background: #e74c3c;
+  color: white;
+}
+
+#pet-image {
+  width: 120px;
+  max-width: 80vw; /* 1. BUG FIX: Cat will never be wider than 80% of the screen */
+  height: auto; /* Keeps the cat from looking squished */
+
+  transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 2. ANIMATION: Adds a "bouncy" effect */
+
+  user-select: none; /* 3. BUG FIX: No more blue highlighting! */
+  -webkit-user-drag: none; /* Prevents accidentally "dragging" the image */
+
+  animation: breathe 3s ease-in-out infinite; /* 4. ANIMATION: The breathing loop */
+}
+
+/* The Breathing Animation Logic */
+@keyframes breathe {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  } /* Bulges slightly out */
+  100% {
+    transform: scale(1);
+  }
+}
+
+#feed-btn {
+  background: #3498db;
+  color: white;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 50px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Make the button feel better */
+#feed-btn:active {
+  transform: scale(0.9); /* Shrinks slightly when pressed */
+}
+
+#quit-btn {
+  display: block;
+  margin: 20px auto 0;
+  background: none;
+  color: #bdc3c7;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.gray-out {
+  filter: grayscale(100%); /* Turns the cat gray */
+  opacity: 0.5;
+  transform: scale(0.8) !important;
+}
+
+#game-over-text {
+  color: #e74c3c;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+#game-over-screen {
+  text-align: center;
+  padding: 20px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.skull-icon {
+  font-size: 80px;
+  margin: 0;
+  filter: drop-shadow(0 0 10px #e74c3c);
+}
+
+.final-stats {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 15px;
+  border-radius: 10px;
+  margin: 20px 0;
+  font-size: 20px;
+}
+
+/* A smooth fade-in so it doesn't just "pop" in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#win-screen {
+  text-align: center;
+  padding: 20px;
+  animation: slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.star-icon {
+  font-size: 80px;
+  margin: 0;
+  filter: drop-shadow(0 0 15px #f1c40f);
+  animation: pulse 1.5s infinite;
+}
+
+.win-text {
+  color: #f1c40f;
+  font-size: 32px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Animations for the Win */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

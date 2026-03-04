@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cat Grower Pro</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="game-container">
+      <div id="menu-screen">
+        <h1>CAT GROWER</h1>
+        <p>Select Difficulty to Start:</p>
+        <button class="btn easy" onclick="startGame('easy')">
+          EASY (3 to 15)
+        </button>
+        <button class="btn medium" onclick="startGame('medium')">
+          MEDIUM (5 to 25)
+        </button>
+        <button class="btn hard" onclick="startGame('hard')">
+          HARD (0 to 50!)
+        </button>
+      </div>
+
+      <div id="game-screen" style="display: none">
+        <h2 id="score-label">
+          FISH: <span id="score">0</span> / <span id="goal">0</span>
+        </h2>
+
+        <div class="cat-space">
+          <img src="assets/cat.png" id="pet-image" alt="Cat" />
+        </div>
+
+        <button id="feed-btn" onclick="eat(event)">FEED 🐟</button>
+        <button id="quit-btn" onclick="location.reload()">QUIT</button>
+      </div>
+
+      <div id="win-screen" style="display: none">
+        <h1 class="star-icon">🌟</h1>
+        <h2 class="win-text">VICTORY!</h2>
+        <p>The cat is officially stuffed and happy.</p>
+
+        <div class="final-stats">
+          Total Fish Fed: <span id="win-score">0</span>
+        </div>
+
+        <button class="btn easy" onclick="location.reload()">PLAY AGAIN</button>
+      </div>
+
+      <div id="game-over-screen" style="display: none">
+        <h1 class="skull-icon">💀</h1>
+        <h2>GAME OVER</h2>
+        <p>The cat is still hungry...</p>
+        <div class="final-stats">
+          Best Score this round: <span id="final-score">0</span>
+        </div>
+        <button class="btn hard" onclick="location.reload()">TRY AGAIN</button>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
