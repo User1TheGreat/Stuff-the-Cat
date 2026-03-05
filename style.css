@@ -26,7 +26,6 @@ button:focus {
   width: 100%;
   margin: 10px 0;
   padding: 15px;
-  border: none;
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
@@ -38,16 +37,24 @@ button:focus {
 }
 
 .easy {
-  background: #27ae60;
+  background: #2ecc71;
   color: white;
+  border-color: #27ae60;
 }
 .medium {
   background: #f1c40f;
-  color: black;
+  color: #2c3e50;
+  border-color: #f39c12;
 }
 .hard {
   background: #e74c3c;
   color: white;
+  border-color: #c0392b;
+}
+.impossible {
+  background: #4a0000;
+  color: #ffc1c1;
+  border-color: #2b0000;
 }
 
 #pet-image {
@@ -187,5 +194,24 @@ button:focus {
   }
   100% {
     transform: scale(1);
+  }
+}
+
+.floating-fish {
+  position: absolute;
+  pointer-events: none; /* So you don't accidentally click the emoji */
+  animation: floatUp 0.8s ease-out forwards;
+  font-size: 24px;
+  z-index: 100;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px); /* Moves up 100 pixels */
+    opacity: 0; /* Fades out */
   }
 }

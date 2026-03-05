@@ -13,19 +13,24 @@ function startGame(difficulty) {
   gameActive = true;
 
   if (difficulty === "easy") {
-    score = 3;
-    goal = 15;
-    hungerMultiplier = 0.5;
-    tickSpeed = 2000;
-  } else if (difficulty === "medium") {
     score = 5;
     goal = 25;
-    hungerMultiplier = 1.0;
+    hungerMultiplier = 0.8;
     tickSpeed = 1000;
+  } else if (difficulty === "medium") {
+    score = 5;
+    goal = 75;
+    hungerMultiplier = 1.3;
+    tickSpeed = 900;
   } else if (difficulty === "hard") {
-    score = 0;
-    goal = 50;
-    hungerMultiplier = 2.0;
+    score = 5;
+    goal = 100;
+    hungerMultiplier = 1.7;
+    tickSpeed = 700;
+  } else if (difficulty === "impossible") {
+    score = 5;
+    goal = 150;
+    hungerMultiplier = 2.5;
     tickSpeed = 600;
   }
 
@@ -37,13 +42,31 @@ function eat(event) {
   if (event) event.target.blur(); // THE ANTI-CHEAT
   if (!gameActive) return;
 
-  let roll = Math.floor(Math.random() * 4);
+  const floatingFish = document.createElement("div");
+  floatingFish.innerText = "🐟";
+  floatingFish.className = "floating-fish";
+
+  floatingFish.style.left = event.clientX + "px";
+  floatingFish.style.top = event.clientY + "px";
+
+  const randomSize = Math.random() * (35 - 15) + 15;
+  const randomRotation = Math.floor(Math.random() * 60) - 30;
+
+  floatingFish.style.fontSize = randomSize + "px";
+  floatingFish.style.transform = `rotate(${randomRotation}deg)`;
+
+  document.body.appendChild(floatingFish);
+  setTimeout(() => {
+    floatingFish.remove();
+  }, 800);
+
+  let roll = Math.floor(Math.random() * 5);
   if (roll === 3) {
     score += 3;
-    currentWidth += 40;
+    currentWidth += 30;
   } else {
     score += 1;
-    currentWidth += 15;
+    currentWidth += 10;
   }
 
   if (score > maxScore) maxScore = score; // RECORD PEAK SCORE
@@ -72,6 +95,13 @@ function updateUI() {
   document.getElementById("score").innerText = score;
   document.getElementById("goal").innerText = goal;
   document.getElementById("pet-image").style.width = currentWidth + "px";
+  // Inside your updateUI() function
+  if (score < goal * 0.2) {
+    document.getElementById("pet-image").style.filter =
+      "sepia(1) saturate(5) hue-rotate(-50deg)";
+  } else {
+    document.getElementById("pet-image").style.filter = "none";
+  }
 }
 
 function gameOver() {
