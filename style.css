@@ -1,12 +1,15 @@
+/* 1. LOCK THE BACKGROUND: No scrolling allowed */
 body {
-  background-color: #282c34;
-  color: white;
-  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at center, #1b1e23 0%, #0f1115 100%);
+  color: #f0f2f5;
+  font-family: "Fredoka", sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100vh; /* Exactly the height of the screen */
   margin: 0;
+  overflow: hidden; /* Stops the "long page" effect */
+  -webkit-font-smoothing: antialiased;
 }
 
 button:focus {
@@ -15,107 +18,174 @@ button:focus {
 
 #game-container {
   text-align: center;
-  background: #34495e;
-  padding: 40px;
+  background-color: rgba(30, 34, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 25px;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.4),
+    0 5px 15px rgba(0, 0, 0, 0.2);
+  /* These rules fix the "Strange/Long" look */
+  width: 90vw;
+  max-width: 400px; /* Keeps it looking like a phone app */
+  max-height: 90vh; /* Ensures it never exceeds the screen height */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Spreads items out evenly inside */
+  align-items: center;
 }
-
-.btn {
-  display: block;
+.btn,
+#feed-btn {
   width: 100%;
-  margin: 10px 0;
+  max-width: 250px;
+  margin: 8px 0;
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 12px;
   font-weight: bold;
   cursor: pointer;
-  transition: transform 0.2s;
+  border: none;
+  transition:
+    transform 0.1s,
+    filter 0.2s;
 }
 
 .btn:hover {
   transform: scale(1.05);
 }
 
+#feed-btn {
+  background: #00d2ff;
+  color: #051923;
+  font-size: 22px;
+  box-shadow: 0 6px 0 #0099cc;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+#feed-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #0077aa;
+  background-color: #00c4ee;
+}
+
 .easy {
-  background: #2ecc71;
-  color: white;
-  border-color: #27ae60;
+  background-color: #26de81; /* Lush Mint */
+  color: #0a2e1a; /* Deep Forest */
+  border: 2px solid #20bf6b; /* Mountain Green */
 }
 .medium {
-  background: #f1c40f;
-  color: #2c3e50;
-  border-color: #f39c12;
+  background-color: #fed330; /* Bright Saffron */
+  color: #3d3200; /* Burnt Umber */
+  border: 2px solid #f7b731; /* Honey Gold */
 }
 .hard {
-  background: #e74c3c;
-  color: white;
-  border-color: #c0392b;
+  background-color: #fa8231; /* Tiger Orange */
+  color: #ffffff; /* Pure White */
+  border: 2px solid #e67e22; /* Rust Orange */
 }
+.extreme {
+  background-color: #eb3b5a; /* High-Heat Red */
+  color: #ffffff; /* Pure White */
+  border: 2px solid #d1d8e0; /* Soft Silver */
+}
+
 .impossible {
-  background: #4a0000;
-  color: #ffc1c1;
-  border-color: #2b0000;
+  background-color: #1a0000; /* Void Red */
+  color: #ff4d4d; /* Laser Red */
+  border: 2px solid #ff0000; /* Pure Crimson */
+  font-weight: 900; /* Thickest text */
+  text-transform: uppercase; /* All caps for intensity */
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
 }
 
 #pet-image {
-  width: 120px;
-  max-width: 80vw; /* 1. BUG FIX: Cat will never be wider than 80% of the screen */
-  height: auto; /* Keeps the cat from looking squished */
+  /* width is controlled by your JS, so we just set safety limits */
+  max-width: 100%;
+  max-height: 40vh; /* Limits height so it doesn't push buttons down */
+  height: auto;
+  object-fit: contain;
+  margin: 15px 0;
 
-  transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 2. ANIMATION: Adds a "bouncy" effect */
-
-  user-select: none; /* 3. BUG FIX: No more blue highlighting! */
-  -webkit-user-drag: none; /* Prevents accidentally "dragging" the image */
-
-  animation: breathe 3s ease-in-out infinite; /* 4. ANIMATION: The breathing loop */
+  transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  user-select: none;
+  -webkit-user-drag: none;
+  animation: breathe 3s ease-in-out infinite;
 }
 
 /* The Breathing Animation Logic */
 @keyframes breathe {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.03);
-  } /* Bulges slightly out */
+  0%,
   100% {
     transform: scale(1);
   }
+  50% {
+    transform: scale(1.04);
+  }
 }
 
-#feed-btn {
-  background: #3498db;
-  color: white;
-  padding: 15px 30px;
-  border: none;
-  border-radius: 50px;
-  font-size: 20px;
-  cursor: pointer;
+#rank-board {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.25); /* Darker for better contrast */
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  box-sizing: border-box; /* Prevents padding from breaking the width */
 }
 
-/* Make the button feel better */
-#feed-btn:active {
-  transform: scale(0.9); /* Shrinks slightly when pressed */
+#rank-board h3 {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: #a5b1c2;
+  letter-spacing: 2px;
+  text-align: center; /* Keeps the title in the middle */
+}
+
+.rank-item {
+  font-size: 14px;
+  margin: 8px 0;
+  font-weight: bold;
+  display: flex; /* The Magic Fix */
+  justify-content: space-between; /* Pushes Label to left, Rank to right */
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03); /* Subtle separator */
+  padding-bottom: 4px;
+}
+
+/* Make sure the spans (the actual ranks) are right-aligned */
+.rank-item span {
+  text-align: right;
+  flex-grow: 1; /* Helps push the text to the edges */
+}
+
+/* The Big Rank on the Win Screen */
+#win-rank {
+  font-size: 50px;
+  display: block;
+  font-weight: 900;
+  text-shadow: 0 0 25px currentColor; /* Makes the rank glow its own color */
+  margin-top: 10px;
 }
 
 #quit-btn {
-  display: block;
-  margin: 20px auto 0;
   background: none;
-  color: #bdc3c7;
+  color: #778ca3;
   border: none;
   cursor: pointer;
   text-decoration: underline;
+  margin-top: 10px;
+  font-size: 14px;
 }
 
 .gray-out {
-  filter: grayscale(100%); /* Turns the cat gray */
+  filter: grayscale(100%), brightness(40%); /* Turns the cat gray */
   opacity: 0.5;
   transform: scale(0.8) !important;
 }
 
 #game-over-text {
-  color: #e74c3c;
+  color: #ff4d4d;
   font-size: 24px;
   font-weight: bold;
   margin-top: 10px;
@@ -130,26 +200,37 @@ button:focus {
 .skull-icon {
   font-size: 80px;
   margin: 0;
-  filter: drop-shadow(0 0 10px #e74c3c);
+  filter: drop-shadow(0 0 15px #ff4d4d);
 }
 
 .final-stats {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(38, 222, 129, 0.15);
   padding: 15px;
-  border-radius: 10px;
+  border-radius: 12px;
   margin: 20px 0;
-  font-size: 20px;
+  font-size: 22px;
+  border: 1px solid #26de81;
+  color: #26de81;
+  font-weight: bold;
+}
+
+#win-speed {
+  font-size: 32px;
+  display: block;
+  color: white;
 }
 
 /* A smooth fade-in so it doesn't just "pop" in */
 @keyframes fadeIn {
-  from {
+  0% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-15px) scale(0.95);
+    filter: blur(4px);
   }
-  to {
+  100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    filter: blur(0);
   }
 }
 
@@ -162,12 +243,12 @@ button:focus {
 .star-icon {
   font-size: 80px;
   margin: 0;
-  filter: drop-shadow(0 0 15px #f1c40f);
+  filter: drop-shadow(0 0 20px #fed330);
   animation: pulse 1.5s infinite;
 }
 
 .win-text {
-  color: #f1c40f;
+  color: #fed330;
   font-size: 32px;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -175,13 +256,16 @@ button:focus {
 
 /* Animations for the Win */
 @keyframes slideUp {
-  from {
+  0% {
     opacity: 0;
-    transform: translateY(50px);
+    transform: translateY(60px) scale(0.8);
   }
-  to {
+  70% {
+    transform: translateY(-5px) scale(1.02); /* Slight overshoot for juice */
+  }
+  100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -197,21 +281,46 @@ button:focus {
   }
 }
 
-.floating-fish {
-  position: absolute;
-  pointer-events: none; /* So you don't accidentally click the emoji */
-  animation: floatUp 0.8s ease-out forwards;
-  font-size: 24px;
-  z-index: 100;
+.panic {
+  animation: shake 0.2s infinite;
+  filter: drop-shadow(0 0 10px #ff4d4d) !important;
 }
 
-@keyframes floatUp {
+@keyframes shake {
   0% {
-    transform: translateY(0);
-    opacity: 1;
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+  25% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  50% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  75% {
+    transform: translate(3px, 2px) rotate(-1deg);
   }
   100% {
-    transform: translateY(-100px); /* Moves up 100 pixels */
-    opacity: 0; /* Fades out */
+    transform: translate(1px, -1px) rotate(0deg);
+  }
+}
+
+.floating-fish {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 5px #00d2ff);
+  animation: explosionEffect 0.8s ease-out forwards;
+}
+
+@keyframes explosionEffect {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--x-move)), calc(-50% + var(--y-move)))
+      scale(0.5) rotate(360deg);
   }
 }

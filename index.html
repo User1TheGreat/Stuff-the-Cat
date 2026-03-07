@@ -3,25 +3,46 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cat Grower Pro</title>
+    <title>Stuff the Cat</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div id="game-container">
       <div id="menu-screen">
-        <h1>CAT GROWER</h1>
+        <h1>STUFF THE CAT</h1>
+        <div id="rank-board">
+          <h3>--- RANKS (Ranked by CPS) ---</h3>
+          <div class="rank-item">Easy: <span id="record-easy">NONE</span></div>
+          <div class="rank-item">
+            Medium: <span id="record-medium">NONE</span>
+          </div>
+          <div class="rank-item">Hard: <span id="record-hard">NONE</span></div>
+          <div class="rank-item">
+            Expert: <span id="record-expert">NONE</span>
+          </div>
+          <div class="rank-item">
+            Impossible: <span id="record-impossible">NONE</span>
+          </div>
+        </div>
         <p>Select Difficulty to Start:</p>
         <button class="btn easy" onclick="startGame('easy')">
-          EASY (Goal: 25)
+          EASY (Goal: 75)
         </button>
         <button class="btn medium" onclick="startGame('medium')">
-          MEDIUM (Goal: 75)
+          MEDIUM (Goal: 150)
         </button>
         <button class="btn hard" onclick="startGame('hard')">
-          HARD (Goal: 100)
+          HARD (Goal: 300)
+        </button>
+        <button class="btn extreme" onclick="startGame('extreme')">
+          EXTREME (Goal: 600)
         </button>
         <button class="btn impossible" onclick="startGame('impossible')">
-          IMPOSSIBLE (Goal: 150)
+          IMPOSSIBLE (Goal: 1000)
         </button>
       </div>
 
@@ -44,7 +65,8 @@
         <p>The cat is officially stuffed and happy.</p>
 
         <div class="final-stats">
-          Total Fish Fed: <span id="win-score">0</span>
+          SPEED: <span id="win-speed">0</span> CPS<br />
+          RANK: <span id="win-rank">---</span>
         </div>
 
         <button class="btn easy" onclick="location.reload()">PLAY AGAIN</button>
