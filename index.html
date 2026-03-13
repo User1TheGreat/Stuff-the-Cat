@@ -22,10 +22,16 @@
           </div>
           <div class="rank-item">Hard: <span id="record-hard">NONE</span></div>
           <div class="rank-item">
-            Expert: <span id="record-expert">NONE</span>
+            Extreme: <span id="record-extreme">NONE</span>
+          </div>
+          <div class="rank-item">
+            Master: <span id="record-master">NONE</span>
           </div>
           <div class="rank-item">
             Impossible: <span id="record-impossible">NONE</span>
+          </div>
+          <div class="rank-item">
+            Divine: <span id="record-divine">NONE</span>
           </div>
         </div>
         <p>Select Difficulty to Start:</p>
@@ -41,12 +47,19 @@
         <button class="btn extreme" onclick="startGame('extreme')">
           EXTREME (Goal: 600)
         </button>
+        <button class="btn master" onclick="startGame('master')">
+          MASTER (Goal: 800)
+        </button>
         <button class="btn impossible" onclick="startGame('impossible')">
           IMPOSSIBLE (Goal: 1000)
+        </button>
+        <button class="btn divine" onclick="startGame('divine')">
+          DIVINE (Goal: 1500)
         </button>
       </div>
 
       <div id="game-screen" style="display: none">
+        <button id="quit-btn" onclick="location.reload()">✕ QUIT</button>
         <h2 id="score-label">
           FISH: <span id="score">0</span> / <span id="goal">0</span>
         </h2>
@@ -56,7 +69,6 @@
         </div>
 
         <button id="feed-btn" onclick="eat(event)">FEED 🐟</button>
-        <button id="quit-btn" onclick="location.reload()">QUIT</button>
       </div>
 
       <div id="win-screen" style="display: none">

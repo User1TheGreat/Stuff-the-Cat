@@ -9,6 +9,9 @@ let currentDifficulty = "";
 let startTime;
 
 function startGame(difficulty) {
+  clearInterval(hungerInterval);
+  score = 5;
+  maxScore = 5;
   currentDifficulty = difficulty;
   document.getElementById("menu-screen").style.display = "none";
   document.getElementById("game-screen").style.display = "block";
@@ -35,11 +38,21 @@ function startGame(difficulty) {
     goal = 600;
     hungerMultiplier = 3.2;
     tickSpeed = 700;
+  } else if (difficulty === "master") {
+    score = 5;
+    goal = 800;
+    hungerMultiplier: 3.8;
+    tickSpeed = 500;
   } else if (difficulty === "impossible") {
     score = 5;
     goal = 1000;
     hungerMultiplier = 4.5;
     tickSpeed = 600;
+  } else if (difficulty === "divine") {
+    score = 5;
+    goal = 1500;
+    hungerMultiplier = 6.0;
+    tickSpeed = 500;
   }
 
   startTime = Date.now();
@@ -104,8 +117,7 @@ function startHungerTimer() {
   hungerInterval = setInterval(function () {
     if (gameActive && score > 0) {
       // Subtract hunger and stay above 0
-      score = Math.max(0, score - 1 * hungerMultiplier);
-
+      score = Math.max(0, parseFloat(score) - hungerMultiplier);
       if (score <= 0) {
         score = 0;
         updateUI();
@@ -141,7 +153,7 @@ function updateUI() {
   else scoreElement.style.color = "#26de81"; // Success Green
 
   // Fix: Force math calculation so the cat grows
-  let newWidth = 120 + score * 2.5;
+  let newWidth = Math.min(120 + score * 1.5, 380);
   document.getElementById("pet-image").style.width = newWidth + "px";
 }
 
@@ -211,7 +223,15 @@ function winGame() {
 
 // 2. LOAD RECORDS FUNCTION (Call this on window.onload)
 function loadBestRecords() {
-  const modes = ["easy", "medium", "hard", "extreme", "impossible"];
+  const modes = [
+    "easy",
+    "medium",
+    "hard",
+    "extreme",
+    "master",
+    "impossible",
+    "divine",
+  ];
   modes.forEach((mode) => {
     let savedCPS = localStorage.getItem("best_cps_" + mode);
     let savedRank = localStorage.getItem("best_cps_" + mode + "_rank");

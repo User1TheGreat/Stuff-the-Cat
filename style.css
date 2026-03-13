@@ -1,15 +1,35 @@
+/* Add this to body or specific elements */
+* {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard syntax */
+}
+
 /* 1. LOCK THE BACKGROUND: No scrolling allowed */
 body {
   background: radial-gradient(circle at center, #1b1e23 0%, #0f1115 100%);
+  animation: bgPulse 10s ease-in-out infinite;
   color: #f0f2f5;
   font-family: "Fredoka", sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Exactly the height of the screen */
+  min-height: 100vh; /* Exactly the height of the screen */
   margin: 0;
-  overflow: hidden; /* Stops the "long page" effect */
+  overflow: auto; /* Stops the "long page" effect */
+  padding: 10px;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes bgPulse {
+  0%,
+  100% {
+    background-color: #0f1115;
+  }
+  50% {
+    background-color: #161a1f;
+  }
 }
 
 button:focus {
@@ -22,7 +42,7 @@ button:focus {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 25px;
+  padding: 20px;
   border-radius: 20px;
   box-shadow:
     0 15px 35px rgba(0, 0, 0, 0.4),
@@ -30,7 +50,11 @@ button:focus {
   /* These rules fix the "Strange/Long" look */
   width: 90vw;
   max-width: 400px; /* Keeps it looking like a phone app */
-  max-height: 90vh; /* Ensures it never exceeds the screen height */
+  max-height: 95vh; /* Ensures it never exceeds the screen height */
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: #00d2ff rgba(0, 0, 0, 0);
   display: flex;
   flex-direction: column;
   justify-content: space-between; /* Spreads items out evenly inside */
@@ -40,74 +64,168 @@ button:focus {
 #feed-btn {
   width: 100%;
   max-width: 250px;
-  margin: 8px 0;
-  padding: 15px;
-  border-radius: 12px;
-  font-weight: bold;
+  margin: 10px 0;
+  padding: 16px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 16px;
   cursor: pointer;
   border: none;
-  transition:
-    transform 0.1s,
-    filter 0.2s;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn:hover {
-  transform: scale(1.05);
+  transform: translateY(-3px) scale(1.03);
+  filter: brightness(1.1);
+}
+
+.btn:active {
+  transform: translateY(2px) scale(0.98);
 }
 
 #feed-btn {
-  background: #00d2ff;
-  color: #051923;
-  font-size: 22px;
-  box-shadow: 0 6px 0 #0099cc;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+  color: white;
+  font-size: 24px;
+  padding: 20px;
+  /* The 6px shadow creates the "height" of the button */
+  box-shadow:
+    0 6px 0 #2a5298,
+    0 15px 30px rgba(0, 210, 255, 0.4);
+  margin-top: 15px;
+  transition: all 0.1s ease; /* Snappy transition for clicking */
 }
 
 #feed-btn:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 #0077aa;
-  background-color: #00c4ee;
+  /* This moves the button down by 4px */
+  transform: translateY(4px) scale(0.98);
+  /* This reduces the shadow by 4px so it looks like it hit the "floor" */
+  box-shadow:
+    0 2px 0 #2a5298,
+    0 5px 15px rgba(0, 210, 255, 0.2);
+  background: linear-gradient(135deg, #00c4ee, #2b62b1);
 }
 
+/* EASY - Minty Fresh */
 .easy {
-  background-color: #26de81; /* Lush Mint */
-  color: #0a2e1a; /* Deep Forest */
-  border: 2px solid #20bf6b; /* Mountain Green */
-}
-.medium {
-  background-color: #fed330; /* Bright Saffron */
-  color: #3d3200; /* Burnt Umber */
-  border: 2px solid #f7b731; /* Honey Gold */
-}
-.hard {
-  background-color: #fa8231; /* Tiger Orange */
-  color: #ffffff; /* Pure White */
-  border: 2px solid #e67e22; /* Rust Orange */
-}
-.extreme {
-  background-color: #eb3b5a; /* High-Heat Red */
-  color: #ffffff; /* Pure White */
-  border: 2px solid #d1d8e0; /* Soft Silver */
+  background: linear-gradient(135deg, #26de81, #20bf6b);
+  color: #052b18;
+  box-shadow:
+    0 6px 0 #1a9452,
+    0 10px 20px rgba(38, 222, 129, 0.3);
 }
 
+/* MEDIUM - Golden Saffron */
+.medium {
+  background: linear-gradient(135deg, #fed330, #f7b731);
+  color: #4b3e00;
+  box-shadow:
+    0 6px 0 #c99300,
+    0 10px 20px rgba(254, 211, 48, 0.3);
+}
+
+/* HARD - Tiger Blaze */
+.hard {
+  background: linear-gradient(135deg, #fa8231, #e67e22);
+  color: #fff;
+  box-shadow:
+    0 6px 0 #a35213,
+    0 10px 20px rgba(250, 130, 49, 0.3);
+}
+
+/* EXTREME - Crimson Fury */
+.extreme {
+  background: linear-gradient(135deg, #eb3b5a, #fc5c65);
+  color: #fff;
+  box-shadow:
+    0 6px 0 #a92a40,
+    0 10px 20px rgba(235, 59, 90, 0.3);
+}
+
+/* MASTER - Royal Void */
+.master {
+  background: linear-gradient(135deg, #8854d0, #a55eea);
+  color: #fff;
+  box-shadow:
+    0 6px 0 #5b1bb1,
+    0 0 20px rgba(136, 84, 208, 0.5);
+}
+
+/* IMPOSSIBLE - Blood Metal */
 .impossible {
-  background-color: #1a0000; /* Void Red */
-  color: #ff4d4d; /* Laser Red */
-  border: 2px solid #ff0000; /* Pure Crimson */
-  font-weight: 900; /* Thickest text */
-  text-transform: uppercase; /* All caps for intensity */
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+  background: linear-gradient(135deg, #1a0000, #4b0000);
+  color: #ff4d4d;
+  border: 1px solid #ff0000;
+  box-shadow:
+    0 6px 0 #000,
+    0 0 25px rgba(255, 0, 0, 0.6);
+  animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+  0% {
+    box-shadow:
+      0 6px 0 #000,
+      0 0 10px rgba(255, 0, 0, 0.6);
+  }
+  50% {
+    box-shadow:
+      0 6px 0 #000,
+      0 0 25px rgba(255, 0, 0, 0.9);
+  }
+  100% {
+    box-shadow:
+      0 6px 0 #000,
+      0 0 10px rgba(255, 0, 0, 0.6);
+  }
+}
+
+/* DIVINE - Ethereal Light */
+.divine {
+  background: linear-gradient(45deg, #ffffff, #00d2ff, #ffffff);
+  background-size: 200% 200%;
+  color: #051923;
+  box-shadow:
+    0 6px 0 #0099cc,
+    0 0 30px #fff;
+  animation: divineFlow 3s linear infinite;
+}
+
+@keyframes divineFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.cat-space {
+  height: 250px; /* This locks the area height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 15px 0;
+  width: 100%;
+  overflow: hidden; /* Keeps the cat inside the box */
 }
 
 #pet-image {
   /* width is controlled by your JS, so we just set safety limits */
-  max-width: 100%;
-  max-height: 40vh; /* Limits height so it doesn't push buttons down */
+  max-width: 250px;
+  max-height: 220px;
+  width: 120px;
   height: auto;
   object-fit: contain;
   margin: 15px 0;
 
-  transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: width 0.2s ease-out;
   user-select: none;
   -webkit-user-drag: none;
   animation: breathe 3s ease-in-out infinite;
@@ -169,17 +287,30 @@ button:focus {
 }
 
 #quit-btn {
-  background: none;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.05);
   color: #778ca3;
-  border: none;
-  cursor: pointer;
-  text-decoration: underline;
-  margin-top: 10px;
-  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 15px;
+  border-radius: 8px;
+  font-size: 11px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s;
+  z-index: 10;
+}
+
+#quit-btn:hover {
+  background: #eb3b5a;
+  color: white;
+  border-color: #eb3b5a;
+  transform: scale(1.1);
 }
 
 .gray-out {
-  filter: grayscale(100%), brightness(40%); /* Turns the cat gray */
+  filter: grayscale(100%) brightness(40%); /* Turns the cat gray */
   opacity: 0.5;
   transform: scale(0.8) !important;
 }
@@ -218,6 +349,19 @@ button:focus {
   font-size: 32px;
   display: block;
   color: white;
+}
+
+#score-label {
+  font-size: 20px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  margin-bottom: 5px;
+}
+
+#score {
+  font-weight: 900;
+  font-size: 28px;
+  transition: color 0.3s ease; /* Smooth color transitions */
 }
 
 /* A smooth fade-in so it doesn't just "pop" in */
@@ -322,5 +466,31 @@ button:focus {
     opacity: 0;
     transform: translate(calc(-50% + var(--x-move)), calc(-50% + var(--y-move)))
       scale(0.5) rotate(360deg);
+  }
+}
+
+@media (max-height: 700px) {
+  #game-container {
+    padding: 15px;
+  }
+  h1 {
+    font-size: 24px;
+    margin: 10px 0;
+  }
+  .btn,
+  #feed-btn {
+    padding: 10px;
+    margin: 5px 0;
+    font-size: 16px;
+  }
+  .cat-space {
+    height: 180px;
+  } /* Shrinks cat space so buttons fit */
+  #pet-image {
+    max-height: 160px;
+  }
+  #rank-board {
+    margin-top: 10px;
+    padding: 10px;
   }
 }
