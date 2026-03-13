@@ -1,0 +1,875 @@
+/* ==========================================
+   1. GLOBAL RESETS & BASE STYLES
+========================================== */
+* {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard syntax */
+}
+
+/* 1. LOCK THE BACKGROUND: No scrolling allowed */
+body {
+  background: radial-gradient(circle at center, #1b1e23 0%, #0f1115 100%);
+  animation: bgPulse 10s ease-in-out infinite;
+  color: #f0f2f5;
+  font-family: "Fredoka", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Exactly the height of the screen */
+  margin: 0;
+  overflow: hidden; /* Stops the "long page" effect */
+  padding: 10px;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes bgPulse {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.2);
+  }
+}
+
+button:focus {
+  outline: none;
+}
+
+/* Performance Mode Styles */
+.low-perf * {
+  animation: none !important;
+  backdrop-filter: none !important;
+  text-shadow: none !important;
+}
+.low-perf body {
+  background: #0f1115 !important;
+}
+
+/* ==========================================
+   2. MAIN LAYOUT & CONTAINERS
+========================================== */
+#game-container {
+  text-align: center;
+  background-color: rgba(30, 34, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.4),
+    0 5px 15px rgba(0, 0, 0, 0.2);
+  /* These rules fix the "Strange/Long" look */
+  width: 90vw;
+  max-width: 400px; /* Keeps it looking like a phone app */
+  max-height: 95vh; /* Ensures it never exceeds the screen height */
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: #00d2ff rgba(0, 0, 0, 0);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Spreads items out evenly inside */
+  align-items: center;
+}
+
+.cat-space {
+  height: 250px; /* This locks the area height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 15px 0;
+  width: 100%;
+  overflow: hidden; /* Keeps the cat inside the box */
+}
+
+#pet-image {
+  /* width is controlled by your JS, so we just set safety limits */
+  max-width: 250px;
+  max-height: 220px;
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+  margin: 15px 0;
+
+  transition: width 0.2s ease-out;
+  user-select: none;
+  -webkit-user-drag: none;
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* ==========================================
+   3. MENU & GRID SYSTEM
+========================================== */
+.game-title {
+  font-size: 36px;
+  color: #fed330;
+  text-shadow: 0 4px 0 #c99300;
+  margin-bottom: 5px;
+  letter-spacing: 2px;
+}
+
+.menu-controls-row {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  width: 100% !important;
+  margin: 15px 0 !important;
+  box-sizing: border-box !important;
+}
+
+.menu-top-bar {
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.menu-subtext {
+  font-size: 11px;
+  color: #778ca3;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 15px;
+}
+
+.difficulty-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns */
+  gap: 12px; /* Space between buttons */
+  width: 100%;
+}
+
+/* Adjusting the Grid Buttons to fit nicely */
+.difficulty-grid .btn {
+  width: 100%; /* Fill the grid cell */
+  max-width: none; /* Override old max-width */
+  margin: 0; /* Remove old vertical margins */
+  padding: 14px 5px;
+  font-size: 14px;
+}
+
+/* ==========================================
+   4. BUTTONS & UI CONTROLS
+========================================== */
+.btn,
+#feed-btn {
+  width: 100%;
+  margin: 5px 0;
+  padding: 16px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  filter: brightness(1.1);
+}
+
+.btn:active {
+  transform: translateY(2px) scale(0.98);
+}
+
+#feed-btn {
+  background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+  color: white;
+  font-size: 24px;
+  padding: 20px;
+  /* The 6px shadow creates the "height" of the button */
+  box-shadow:
+    0 6px 0 #2a5298,
+    0 15px 30px rgba(0, 210, 255, 0.4);
+  margin-top: 15px;
+  transition: all 0.1s ease; /* Snappy transition for clicking */
+}
+
+#feed-btn:active {
+  /* This moves the button down by 4px */
+  transform: translateY(4px) scale(0.98);
+  /* This reduces the shadow by 4px so it looks like it hit the "floor" */
+  box-shadow:
+    0 2px 0 #2a5298,
+    0 5px 15px rgba(0, 210, 255, 0.2);
+  background: linear-gradient(135deg, #00c4ee, #2b62b1);
+}
+
+#quit-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #778ca3;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 15px;
+  border-radius: 8px;
+  font-size: 11px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s;
+  z-index: 10;
+}
+
+#quit-btn:hover {
+  background: #eb3b5a;
+  color: white;
+  border-color: #eb3b5a;
+  transform: scale(1.1);
+}
+
+.menu-btn.secondary {
+  flex: 1; /* This forces both buttons to be the exact same width */
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 12px; /* Uniform height */
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px; /* Keep text size consistent */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 45px; /* Ensures they never shrink vertically */
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.menu-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.menu-btn.secondary:active {
+  transform: translateY(1px);
+}
+
+/* ==========================================
+   5. DIFFICULTY THEMES
+========================================== */
+/* EASY - Minty Fresh */
+.easy {
+  background: linear-gradient(135deg, #26de81, #20bf6b);
+  color: #052b18;
+  box-shadow:
+    0 6px 0 #1a9452,
+    0 10px 20px rgba(38, 222, 129, 0.3);
+}
+
+/* MEDIUM - Golden Saffron */
+.medium {
+  background: linear-gradient(135deg, #fed330, #f7b731);
+  color: #4b3e00;
+  box-shadow:
+    0 6px 0 #c99300,
+    0 10px 20px rgba(254, 211, 48, 0.3);
+}
+
+/* HARD - Tiger Blaze */
+.hard {
+  background: linear-gradient(135deg, #fa8231, #e67e22);
+  color: #fff;
+  box-shadow:
+    0 6px 0 #a35213,
+    0 10px 20px rgba(250, 130, 49, 0.3);
+}
+
+/* EXTREME - Crimson Fury */
+.extreme {
+  background: linear-gradient(135deg, #eb3b5a, #fc5c65);
+  color: #fff;
+  box-shadow:
+    0 6px 0 #a92a40,
+    0 10px 20px rgba(235, 59, 90, 0.3);
+}
+
+/* MASTER - Royal Void */
+.master {
+  background: linear-gradient(135deg, #8854d0, #a55eea);
+  color: #fff;
+  box-shadow:
+    0 6px 0 #5b1bb1,
+    0 0 20px rgba(136, 84, 208, 0.5);
+}
+
+/* IMPOSSIBLE - Blood Metal */
+.impossible {
+  background: linear-gradient(135deg, #1a0000, #4b0000);
+  color: #ff4d4d;
+  border: 1px solid #ff0000;
+  box-shadow:
+    0 6px 0 #000,
+    0 0 25px rgba(255, 0, 0, 0.6);
+  animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+  0% {
+    box-shadow:
+      0 6px 0 #000,
+      0 0 10px rgba(255, 0, 0, 0.6);
+  }
+  50% {
+    box-shadow:
+      0 6px 0 #000,
+      0 0 25px rgba(255, 0, 0, 0.9);
+  }
+  100% {
+    box-shadow:
+      0 6px 0 #000,
+      0 0 10px rgba(255, 0, 0, 0.6);
+  }
+}
+
+/* DIVINE - Ethereal Light */
+.divine {
+  background: linear-gradient(45deg, #ffffff, #00d2ff, #ffffff);
+  background-size: 200% 200%;
+  color: #051923;
+  box-shadow:
+    0 6px 0 #0099cc,
+    0 0 30px #fff;
+  animation: divineFlow 3s linear infinite;
+}
+
+.btn.divine {
+  grid-column: span 2; /* Make it take up both columns */
+  margin-top: 10px;
+  width: 100%;
+  max-width: none;
+  font-size: 18px;
+  padding: 18px;
+  border: 2px solid #ffffff;
+}
+
+@keyframes divineFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ==========================================
+   6. MODALS: SETTINGS & STATS
+========================================== */
+#settings-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 17, 21, 0.98);
+  backdrop-filter: blur(15px);
+  z-index: 101; /* Above stats */
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.toggle-btn {
+  background: #2d3436;
+  border: none;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: 0.2s;
+}
+
+.toggle-btn.on {
+  background: #26de81;
+  color: #052b18;
+}
+.toggle-btn.off {
+  background: #eb3b5a;
+  color: white;
+}
+
+.volume-slider {
+  width: 100%;
+  margin-top: 10px;
+  accent-color: #fed330; /* Makes the handle match your theme */
+  cursor: pointer;
+}
+
+#stats-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0f1115; /* Solid color instead of transparent to hide menu */
+  z-index: 100;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column; /* Stack title and cards */
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box; /* Crucial: keeps padding inside the 100% width */
+  overflow-y: auto; /* Allows scrolling inside stats without moving the modal */
+}
+
+#stats-modal h2 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: #fed330;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.stats-content {
+  width: 90%;
+  text-align: center;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border-radius: 12px;
+  margin: 10px 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #778ca3;
+  text-transform: uppercase;
+}
+.stat-value {
+  font-size: 22px;
+  font-weight: 900;
+  color: #00d2ff;
+  display: block;
+}
+
+.highlight {
+  border: 1px solid #fed330;
+}
+
+.stats-toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  margin: 10px auto;
+  display: block;
+}
+
+.close-stats {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  font-size: 28px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+/* ==========================================
+   7. SCOREBOARD & RANKS
+========================================== */
+#score-label {
+  font-size: 20px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  margin-bottom: 5px;
+}
+
+#score {
+  font-weight: 900;
+  font-size: 28px;
+  transition: color 0.3s ease; /* Smooth color transitions */
+}
+
+#rank-board {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.25); /* Darker for better contrast */
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  box-sizing: border-box; /* Prevents padding from breaking the width */
+}
+
+#rank-board h3 {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: #a5b1c2;
+  letter-spacing: 2px;
+  text-align: center; /* Keeps the title in the middle */
+}
+
+.rank-item {
+  font-size: 14px;
+  margin: 8px 0;
+  font-weight: bold;
+  display: flex; /* The Magic Fix */
+  justify-content: space-between; /* Pushes Label to left, Rank to right */
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03); /* Subtle separator */
+  padding-bottom: 4px;
+}
+
+/* Make sure the spans (the actual ranks) are right-aligned */
+.rank-item span {
+  text-align: right;
+  flex-grow: 1; /* Helps push the text to the edges */
+}
+
+/* The Big Rank on the Win Screen */
+#win-rank {
+  font-size: 50px;
+  display: block;
+  font-weight: 900;
+  text-shadow: 0 0 25px currentColor; /* Makes the rank glow its own color */
+  margin-top: 10px;
+}
+
+/* ==========================================
+   8. END GAME SCREENS (WIN & LOSE)
+========================================== */
+#win-screen {
+  text-align: center;
+  padding: 20px;
+  animation: slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.star-icon {
+  font-size: 80px;
+  margin: 0;
+  filter: drop-shadow(0 0 20px #fed330);
+  animation: pulse 1.5s infinite;
+}
+
+.win-text {
+  color: #fed330;
+  font-size: 32px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+#win-speed {
+  font-size: 32px;
+  display: block;
+  color: white;
+}
+
+.final-stats {
+  background: rgba(38, 222, 129, 0.15);
+  padding: 15px;
+  border-radius: 12px;
+  margin: 20px 0;
+  font-size: 22px;
+  border: 1px solid #26de81;
+  color: #26de81;
+  font-weight: bold;
+}
+
+#game-over-screen {
+  text-align: center;
+  padding: 20px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+#game-over-text {
+  color: #ff4d4d;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.skull-icon {
+  font-size: 80px;
+  margin: 0;
+  filter: drop-shadow(0 0 15px #ff4d4d);
+}
+
+.gray-out {
+  filter: grayscale(100%) brightness(40%); /* Turns the cat gray */
+  opacity: 0.5;
+  transform: scale(0.8) !important;
+}
+
+/* ==========================================
+   9. LOADING SCREEN
+========================================== */
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0f1115; /* Match your body background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Higher than everything else */
+  transition:
+    opacity 0.5s ease,
+    visibility 0.5s;
+}
+
+.loader-content {
+  text-align: center;
+}
+
+.loader-cat {
+  font-size: 60px;
+  animation: loaderBlink 1s ease-in-out infinite;
+  margin-bottom: 20px;
+}
+
+.loader-text {
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: #fed330;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  width: 200px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #00d2ff, #fed330);
+  animation: fillProgress 1.5s ease-in-out forwards;
+}
+
+/* Class to fade out the loader */
+.loader-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* ==========================================
+   10. EFFECTS & ANIMATIONS
+========================================== */
+.floating-fish {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 5px #00d2ff);
+  animation: explosionEffect 0.8s ease-out forwards;
+}
+
+.shake-screen {
+  animation: screenShake 0.1s ease-in-out;
+}
+
+.panic {
+  animation: shake 0.2s infinite;
+  filter: drop-shadow(0 0 10px #ff4d4d) !important;
+}
+
+/* The Breathing Animation Logic */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes explosionEffect {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--x-move)), calc(-50% + var(--y-move)))
+      scale(0.5) rotate(360deg);
+  }
+}
+
+/* Animations for the Win */
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(60px) scale(0.8);
+  }
+  70% {
+    transform: translateY(-5px) scale(1.02); /* Slight overshoot for juice */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+  25% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  50% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  75% {
+    transform: translate(3px, 2px) rotate(-1deg);
+  }
+  100% {
+    transform: translate(1px, -1px) rotate(0deg);
+  }
+}
+
+@keyframes screenShake {
+  0% {
+    transform: translate(2px, 2px);
+  }
+  25% {
+    transform: translate(-2px, -1px);
+  }
+  50% {
+    transform: translate(-1px, 2px);
+  }
+  75% {
+    transform: translate(1px, -2px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+/* A smooth fade-in so it doesn't just "pop" in */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.95);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes loaderBlink {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+}
+
+@keyframes fillProgress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* ==========================================
+   11. MEDIA QUERIES (RESPONSIVE FIXES)
+========================================== */
+/* If the screen is very small, shrink the gaps so everything stays on one screen */
+@media (max-height: 700px) {
+  .difficulty-grid {
+    gap: 8px;
+  }
+
+  .difficulty-grid .btn {
+    padding: 10px 5px;
+  }
+
+  .game-title {
+    font-size: 28px;
+  }
+
+  #game-container {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 24px;
+    margin: 10px 0;
+  }
+
+  .btn,
+  #feed-btn {
+    padding: 10px;
+    margin: 5px 0;
+    font-size: 16px;
+  }
+
+  .cat-space {
+    height: 180px;
+  } /* Shrinks cat space so buttons fit */
+
+  #pet-image {
+    max-height: 160px;
+  }
+
+  #rank-board {
+    margin-top: 10px;
+    padding: 10px;
+  }
+}

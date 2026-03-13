@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stuff the Cat</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="loading-screen">
+      <div class="loader-content">
+        <div class="loader-cat">🐾</div>
+        <h2 class="loader-text">PREPARING FISH...</h2>
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+    <div id="game-container">
+      <div id="menu-screen">
+        <h1 class="game-title">STUFF THE CAT</h1>
+
+        <div class="menu-controls-row" style="display: flex">
+          <button class="stats-toggle-btn" onclick="toggleStats(true)">
+            📊 CATISTICS
+          </button>
+          <button class="menu-btn secondary" onclick="toggleSettings(true)">
+            ⚙️ SETTINGS
+          </button>
+        </div>
+
+        <div id="settings-modal" style="display: none">
+          <div class="stats-content">
+            <button class="close-stats" onclick="toggleSettings(false)">
+              ✕
+            </button>
+            <h2 style="color: #fed330; margin-bottom: 20px">SETTINGS</h2>
+
+            <div class="settings-grid">
+              <div class="stat-card">
+                <span class="stat-label">MUSIC</span>
+                <button
+                  id="music-toggle"
+                  class="toggle-btn off"
+                  onclick="handleToggle('music')"
+                >
+                  OFF
+                </button>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">SOUNDS</span>
+                <button
+                  id="sfx-toggle"
+                  class="toggle-btn on"
+                  onclick="handleToggle('sfx')"
+                >
+                  ON
+                </button>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-label">MUSIC VOLUME</span>
+              <input
+                type="range"
+                id="music-volume"
+                class="volume-slider"
+                min="0"
+                max="1"
+                step="0.1"
+                oninput="updateVolume('music', this.value)"
+              />
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-label">SFX VOLUME</span>
+              <input
+                type="range"
+                id="sfx-volume"
+                class="volume-slider"
+                min="0"
+                max="1"
+                step="0.1"
+                oninput="updateVolume('sfx', this.value)"
+              />
+            </div>
+
+            <div class="stat-card highlight">
+              <span class="stat-label">PERFORMANCE MODE</span>
+              <button
+                id="perf-toggle"
+                class="toggle-btn off"
+                onclick="handleToggle('perf')"
+              >
+                OFF
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p class="menu-subtext">SELECT DIFFICULTY</p>
+
+        <div class="difficulty-grid">
+          <button class="btn easy" onclick="startGame('easy')">EASY</button>
+          <button class="btn medium" onclick="startGame('medium')">
+            MEDIUM
+          </button>
+          <button class="btn hard" onclick="startGame('hard')">HARD</button>
+          <button class="btn extreme" onclick="startGame('extreme')">
+            EXTREME
+          </button>
+          <button class="btn master" onclick="startGame('master')">
+            MASTER
+          </button>
+          <button class="btn impossible" onclick="startGame('impossible')">
+            IMPOSSIBLE
+          </button>
+        </div>
+
+        <button class="btn divine" onclick="startGame('divine')">
+          ✧ DIVINE ✧
+        </button>
+      </div>
+
+      <div id="game-screen" style="display: none">
+        <button id="quit-btn" onclick="quitToMenu()">✕ QUIT</button>
+        <h2 id="score-label">
+          FISH: <span id="score">0</span> / <span id="goal">0</span>
+        </h2>
+
+        <div id="live-cps-box">SPEED: <span id="live-cps">0.00</span> CPS</div>
+
+        <div class="cat-space">
+          <img src="cat.png" id="pet-image" alt="Cat" />
+        </div>
+
+        <button id="feed-btn" onclick="eat(event)">FEED 🐟</button>
+      </div>
+
+      <div id="win-screen" style="display: none">
+        <h1 class="star-icon">🌟</h1>
+        <h2 class="win-text">VICTORY!</h2>
+        <p>The cat is officially stuffed and happy.</p>
+
+        <div class="final-stats">
+          SPEED: <span id="win-speed">0</span> CPS<br />
+          RANK: <span id="win-rank">---</span>
+        </div>
+
+        <button class="btn easy" onclick="quitToMenu()">PLAY AGAIN</button>
+      </div>
+
+      <div id="game-over-screen" style="display: none">
+        <h1 class="skull-icon">💀</h1>
+        <h2>GAME OVER</h2>
+        <p>The cat is still hungry...</p>
+        <div class="final-stats">
+          Best Score this round: <span id="final-score">0</span>
+        </div>
+        <button class="btn hard" onclick="quitToMenu()">TRY AGAIN</button>
+      </div>
+
+      <div id="stats-modal" style="display: none">
+        <div class="stats-content">
+          <button class="close-stats" onclick="toggleStats(false)">✕</button>
+          <h2 style="color: #fed330; margin-bottom: 20px">CATISTICS</h2>
+
+          <div class="stat-card">
+            <span class="stat-label">TOTAL FISH FED</span>
+            <span id="total-fish-count" class="stat-value">0</span>
+          </div>
+
+          <div id="rank-board">
+            <div class="rank-item">
+              Easy: <span id="record-easy">NONE</span>
+            </div>
+            <div class="rank-item">
+              Medium: <span id="record-medium">NONE</span>
+            </div>
+            <div class="rank-item">
+              Hard: <span id="record-hard">NONE</span>
+            </div>
+            <div class="rank-item">
+              Extreme: <span id="record-extreme">NONE</span>
+            </div>
+            <div class="rank-item">
+              Master: <span id="record-master">NONE</span>
+            </div>
+            <div class="rank-item">
+              Impossible: <span id="record-impossible">NONE</span>
+            </div>
+            <div class="rank-item">
+              Divine: <span id="record-divine">NONE</span>
+            </div>
+          </div>
+
+          <div class="stat-card highlight">
+            <span class="stat-label">ALL-TIME BEST RANK</span>
+            <span id="all-time-best" class="stat-value">NONE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
