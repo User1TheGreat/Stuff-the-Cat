@@ -11,6 +11,7 @@ let hungerInterval = null;
 let currentDifficulty = "";
 let startTime;
 let cpsInterval = null;
+let clickTimes = [];
 
 let settings = JSON.parse(localStorage.getItem("cat_settings")) || {
   music: false,
@@ -48,17 +49,19 @@ function playClick() {
 // 3. SETTINGS & MODALS
 // ==========================================
 function initSettings() {
-  // 1. Set Volumes
+  // Sync Audio Volumes
   sounds.music.volume = settings.musicVol;
   clickPool.forEach((s) => (s.volume = settings.sfxVol));
   sounds.win.volume = settings.sfxVol;
   sounds.lose.volume = settings.sfxVol;
 
-  // 2. Set Slider Values
-  document.getElementById("music-volume").value = settings.musicVol;
-  document.getElementById("sfx-volume").value = settings.sfxVol;
+  // Sync Slider UI
+  const musicSlider = document.getElementById("music-volume");
+  const sfxSlider = document.getElementById("sfx-volume");
+  if (musicSlider) musicSlider.value = settings.musicVol;
+  if (sfxSlider) sfxSlider.value = settings.sfxVol;
 
-  // 3. Set Button UI (On/Off)
+  // Sync Toggle Buttons
   ["music", "sfx", "perf"].forEach((type) => {
     const btn = document.getElementById(`${type}-toggle`);
     if (btn) {
@@ -68,10 +71,7 @@ function initSettings() {
     }
   });
 
-  // 4. Performance Mode Check
   if (settings.perf) document.body.classList.add("low-perf");
-
-  // Load High Scores for the stats board
   loadBestRecords();
 }
 
@@ -96,20 +96,27 @@ function updateVolume(type, val) {
 function handleToggle(type) {
   settings[type] = !settings[type];
   const btn = document.getElementById(`${type}-toggle`);
-  btn.innerText = settings[type] ? "ON" : "OFF";
-  btn.className = `toggle-btn ${settings[type] ? "on" : "off"}`;
 
-  if (type === "music" && settings.music) {
-    if (sounds.music.volume === 0) sounds.music.volume = 0.3; // Default to 30% if muted
-    sounds.music.play();
+  if (btn) {
+    btn.innerText = settings[type] ? "ON" : "OFF";
+    btn.className = `toggle-btn ${settings[type] ? "on" : "off"}`;
   }
 
+  // Handle Music Playback properly
   if (type === "music") {
-    settings.music ? sounds.music.play() : sounds.music.pause();
+    if (settings.music) {
+      sounds.music
+        .play()
+        .catch(() => console.log("User interaction required for audio"));
+    } else {
+      sounds.music.pause();
+    }
   }
+
   if (type === "perf") {
     document.body.classList.toggle("low-perf", settings.perf);
   }
+
   saveSettings();
 }
 
@@ -131,56 +138,125 @@ function startGame(difficulty) {
   if (settings.music && sounds.music.paused) {
     sounds.music.play();
   }
+
+  // Stop any existing timers
   clearInterval(hungerInterval);
   clearInterval(cpsInterval);
+
+  // Reset score and state
   score = 5;
   maxScore = 5;
   currentDifficulty = difficulty;
+  gameActive = false;
 
   const container = document.getElementById("game-container");
   container.classList.add("shake-screen");
   setTimeout(() => container.classList.remove("shake-screen"), 100);
 
-  document.getElementById("menu-screen").style.display = "none";
-  document.getElementById("game-screen").style.display = "block";
-  gameActive = true;
-
   // Difficulty Mapping
   const config = {
-    easy: { goal: 75, multi: 0.6, tick: 1000 },
-    medium: { goal: 150, multi: 1.2, tick: 900 },
-    hard: { goal: 300, multi: 2.0, tick: 800 },
-    extreme: { goal: 600, multi: 3.2, tick: 750 },
-    master: { goal: 800, multi: 3.8, tick: 700 },
-    impossible: { goal: 1000, multi: 4.5, tick: 600 },
-    divine: { goal: 1500, multi: 6.0, tick: 500 },
+    easy: { goal: 75, multi: 1.0, tick: 1000 },
+    medium: { goal: 120, multi: 1.5, tick: 950 },
+    hard: { goal: 190, multi: 2.0, tick: 900 },
+    extreme: { goal: 300, multi: 2.5, tick: 850 },
+    insane: { goal: 450, multi: 3.0, tick: 800 },
+    master: { goal: 650, multi: 3.5, tick: 750 },
+    nightmare: { goal: 900, multi: 4.0, tick: 700 },
+    impossible: { goal: 1200, multi: 4.5, tick: 650 },
+    chaos: { goal: 1600, multi: 5.0, tick: 600 },
+    hell: { goal: 2100, multi: 5.5, tick: 550 },
+    divine: { goal: 2700, multi: 6.0, tick: 500 },
+    godmode: { goal: 3500, multi: 7.0, tick: 450 },
   };
 
+  // Assign difficulty values BEFORE countdown
   goal = config[difficulty].goal;
   hungerMultiplier = config[difficulty].multi;
   tickSpeed = config[difficulty].tick;
 
-  startTime = Date.now();
-  startCPSCounter();
-  startHungerTimer();
+  // Show countdown screen
+  document.getElementById("menu-screen").style.display = "none";
+  document.getElementById("countdown-screen").style.display = "flex";
+
+  // Start countdown
+  startCountdown(difficulty);
+
+  // Update UI immediately
   updateUI();
 }
 
+function startCountdown(difficulty) {
+  const countdownEl = document.getElementById("countdown-text");
+  const screen = document.getElementById("countdown-screen");
+
+  let steps = ["3", "2", "1", "GO!"];
+  let index = 0;
+
+  countdownEl.innerText = steps[index]; // initialize first step
+
+  const interval = setInterval(() => {
+    index++;
+    if (index >= steps.length) {
+      clearInterval(interval);
+      setTimeout(() => {
+        screen.style.display = "none";
+        document.getElementById("game-screen").style.display = "block";
+        gameActive = true;
+
+        startTime = Date.now();
+        startCPSCounter();
+        startHungerTimer();
+        updateUI();
+      }, 300);
+      return;
+    }
+
+    countdownEl.innerText = steps[index];
+
+    // restart animation
+    countdownEl.style.animation = "none";
+    countdownEl.offsetHeight; // force reflow
+    countdownEl.style.animation = "countdownPop 0.5s ease";
+  }, 800);
+}
+
 function eat(event) {
-  if (event) event.target.blur();
+  // Prevent ghost clicks/focus issues
+  if (event && event.detail === 0) return;
+  if (event && event.target) event.target.blur();
   if (!gameActive) return;
+
   playClick();
 
-  // Visuals
-  const burstCount = Math.floor(Math.random() * 5) + 4;
-  for (let i = 0; i < burstCount; i++) {
+  const now = Date.now();
+
+  // Update clickTimes for CPS calculation
+  clickTimes.push(now);
+  clickTimes = clickTimes.filter((t) => now - t <= 1000);
+
+  // Optimized Particle Burst (Lower count if Performance Mode is ON)
+  const burstCount = settings.perf ? 3 : Math.floor(Math.random() * 5) + 4;
+
+  // Maximum number of floating fish on screen
+  const maxParticles = settings.perf ? 5 : 20;
+  const existing = document.querySelectorAll(".floating-fish").length;
+  const allowed = maxParticles - existing;
+  const count = Math.min(burstCount, allowed);
+
+  // Use clientX/Y from the click, or default to center
+  const x = event.clientX || window.innerWidth / 2;
+  const y = event.clientY || window.innerHeight / 2;
+
+  for (let i = 0; i < count; i++) {
     const floatingFish = document.createElement("div");
     floatingFish.innerText = "🐟";
     floatingFish.className = "floating-fish";
-    floatingFish.style.left = event.clientX + "px";
-    floatingFish.style.top = event.clientY + "px";
+    floatingFish.style.left = `${x}px`;
+    floatingFish.style.top = `${y}px`;
+
     const angle = Math.random() * Math.PI * 2;
     const velocity = Math.random() * 160 + 80;
+
     floatingFish.style.setProperty(
       "--x-move",
       `${Math.cos(angle) * velocity}px`,
@@ -189,33 +265,42 @@ function eat(event) {
       "--y-move",
       `${Math.sin(angle) * velocity}px`,
     );
+
     document.body.appendChild(floatingFish);
-    setTimeout(() => floatingFish.remove(), 750);
+    setTimeout(() => floatingFish.remove(), 700);
   }
 
-  // Score Logic
+  // Balanced Score Logic
   let roll = Math.floor(Math.random() * 20);
   if (roll === 19) {
     score += 10;
-    document.getElementById("score").style.color = "#fed330";
-    setTimeout(
-      () => (document.getElementById("score").style.color = "white"),
-      300,
-    );
-  } else if (roll >= 15) score += 5;
-  else score += 1;
+    const scoreEl = document.getElementById("score");
+    scoreEl.style.color = "#fed330";
+    scoreEl.style.transform = "scale(1.2)";
+    setTimeout(() => {
+      scoreEl.style.color = "white";
+      scoreEl.style.transform = "scale(1)";
+    }, 200);
+  } else if (roll >= 15) {
+    score += 5;
+  } else {
+    score += 1;
+  }
 
   if (score > maxScore) maxScore = score;
 
+  // Save total fish fed globally
   let totalFed = parseInt(localStorage.getItem("total_fish_fed") || 0);
   localStorage.setItem("total_fish_fed", totalFed + 1);
 
   updateUI();
+
+  // Check for win
   if (score >= goal) winGame();
 }
 
 function updateUI() {
-  document.getElementById("score").innerText = Number(score).toFixed(1);
+  document.getElementById("score").innerText = Math.floor(score);
   document.getElementById("goal").innerText = goal;
   const progress = score / goal;
   const pet = document.getElementById("pet-image");
@@ -249,7 +334,7 @@ function startCPSCounter() {
 function startHungerTimer() {
   hungerInterval = setInterval(() => {
     if (gameActive && score > 0) {
-      score = Math.max(0, score - hungerMultiplier);
+      score = Math.max(0, score - hungerMultiplier * 0.4);
       if (score <= 0) gameOver();
       updateUI();
     }
@@ -328,8 +413,7 @@ function gameOver() {
   if (settings.sfx) sounds.lose.play();
   document.getElementById("game-screen").style.display = "none";
   document.getElementById("game-over-screen").style.display = "block";
-  document.getElementById("final-score").innerText =
-    Number(maxScore).toFixed(1);
+  document.getElementById("final-score").innerText = Math.floor(maxScore);
 }
 
 function loadBestRecords() {
@@ -338,9 +422,14 @@ function loadBestRecords() {
     "medium",
     "hard",
     "extreme",
+    "insane",
     "master",
+    "nightmare",
     "impossible",
+    "chaos",
+    "hell",
     "divine",
+    "godmode",
   ];
   let bestRankFound = "NONE",
     highestCPS = 0,
@@ -405,4 +494,32 @@ window.addEventListener("load", () => {
   }, 1800);
 });
 
+// ==========================================
+// 8. GLOBAL AUDIO UNLOCKER
+// ==========================================
+function unlockAudio() {
+  // If music is supposed to be ON but isn't playing yet
+  if (settings.music && sounds.music.paused) {
+    sounds.music
+      .play()
+      .catch((e) => console.log("Still waiting for interaction..."));
+  }
+
+  // Also play a silent buffer for SFX so they are "primed"
+  clickPool.forEach((s) => {
+    s.play();
+    s.pause();
+    s.currentTime = 0;
+  });
+
+  // Remove the listeners so they only run once
+  window.removeEventListener("click", unlockAudio);
+  window.removeEventListener("keydown", unlockAudio);
+}
+
+window.addEventListener("click", unlockAudio);
+window.addEventListener("keydown", unlockAudio);
 window.addEventListener("load", initSettings);
+document
+  .getElementById("feed-btn")
+  .addEventListener("touchstart", eat, { passive: true });
